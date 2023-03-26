@@ -18,12 +18,13 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.5")
+
 
     implementation("org.springdoc:springdoc-openapi-data-rest:1.6.15")
-    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
     runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.15")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

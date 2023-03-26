@@ -1,0 +1,30 @@
+title Get Leaderboard API (Spring)
+
+User->Controller: Get /leaderboards/{name} \n(with Authorization header)
+group #2f2e7b Authorized #white
+Controller->Leaderboard Service: Get leaderboard by name
+
+group #87ceeb Ongoing leaderboard
+Leaderboard Service->Redis: Get top 10 by \nZREVRANGE 
+Redis->Leaderboard Service: Return top 10 scores
+end
+
+group #90ee90 Archived leaderboard (cache hit)
+Leaderboard Service->Redis: Get leaderboard by name
+Redis->Leaderboard Service: Return archived leaderboard
+end
+
+group #D5B85A Archived leaderboard (cache miss)
+Leaderboard Service->MongoDB: Get leaderboard by name
+MongoDB->Leaderboard Service: Return archived leaderboard
+note over Leaderboard Service,Redis: Cache leaderboard
+end
+
+Leaderboard Service->Controller: Return leaderboard
+Controller->User: Return leaderboard response with 200
+
+end
+
+group #ff1e1b Unauthorized #white
+Controller->User: Return 401 Unauthorized
+end

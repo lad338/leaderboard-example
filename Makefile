@@ -1,2 +1,2 @@
-redis:
-	docker compose -f docker-compose-redis-only.yml up
+dep:
+	docker compose -f docker-compose-dependencies.yml up
