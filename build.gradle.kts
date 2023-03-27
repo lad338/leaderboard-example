@@ -22,13 +22,10 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb:3.0.5")
 
-
-    implementation("org.springdoc:springdoc-openapi-data-rest:1.6.15")
-    implementation("org.springdoc:springdoc-openapi-ui:1.6.15")
-    runtimeOnly("org.springdoc:springdoc-openapi-kotlin:1.6.15")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4")
+    implementation("org.springdoc:springdoc-openapi-starter-common:2.0.4")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
