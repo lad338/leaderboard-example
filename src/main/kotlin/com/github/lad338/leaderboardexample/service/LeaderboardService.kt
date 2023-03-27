@@ -25,7 +25,7 @@ class LeaderboardService(
 
         return if (isOngoingLeaderboard(name)) {
             //TODO handle 404
-            Leaderboard(getUserScoresFromCache(name) ?: throw NotImplementedError())
+            Leaderboard(getUserScoresFromCache(name))
         } else {
             //TODO handle 404
             leaderboardArchiveService.getLeaderboard(name)?.leaderboard ?: throw NotImplementedError()
@@ -44,22 +44,19 @@ class LeaderboardService(
             .orEmpty()
     }
 
-    private fun getLeaderboardKey(name: String): String {
-        return LeaderboardConstant.CURRENT_PREFIX + LeaderboardConstant.DELIMITER + name
-    }
-
     private fun saveToLeaderboardIfHigherScore(user: String, score: Double, leaderboardName: String) {
-        val key = stringRedisSerializer.serialize(leaderboardName)
-            ?: throw SerializationException("Cannot serialize key: $leaderboardName")
-
-        val value =
-            stringRedisSerializer.serialize(user) ?: throw SerializationException("Cannot serialize value: $user")
+        val key = mustSerializeString(leaderboardName)
+        val value = mustSerializeString(user)
 
         redisTemplate.execute { connection ->
             connection.zSetCommands().zAdd(
                 key, score, value, RedisZSetCommands.ZAddArgs.empty().gt()
             )
         }
+    }
+
+    private fun mustSerializeString(s: String): ByteArray {
+        return stringRedisSerializer.serialize(s) ?: throw SerializationException("Cannot serialize: $s")
     }
 }
 

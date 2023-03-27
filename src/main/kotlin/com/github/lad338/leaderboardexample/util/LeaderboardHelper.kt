@@ -30,4 +30,8 @@ interface LeaderboardHelper {
         return name == getCurrentMonthLeaderboardName() ||
                 name == LeaderboardConstant.ALL_TIME
     }
+
+    fun getLeaderboardKey(name: String): String {
+        return LeaderboardConstant.CURRENT_PREFIX + LeaderboardConstant.DELIMITER + name
+    }
 }
