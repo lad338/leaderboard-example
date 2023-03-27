@@ -2,7 +2,7 @@ name: Gradle test
 run-name: Running test using gradle test
 on: [ push ]
 jobs:
-  Explore-GitHub-Actions:
+  Gradle-Test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
