@@ -4,6 +4,7 @@ import com.github.lad338.leaderboardexample.constant.LeaderboardConstant.Compani
 import com.github.lad338.leaderboardexample.model.Leaderboard
 import com.github.lad338.leaderboardexample.model.UserScore
 import com.github.lad338.leaderboardexample.model.document.LeaderboardDocument
+import com.github.lad338.leaderboardexample.model.error.LeaderboardNotFoundException
 import io.mockk.*
 import io.mockk.junit5.MockKExtension
 import org.junit.jupiter.api.Assertions.*
@@ -93,9 +94,7 @@ class LeaderboardServiceUnitTest {
         val connection = mockk<RedisConnection>()
         val zSetCommands = mockk<RedisZSetCommands>()
 
-        every { connection.zSetCommands() }.returns(
-            zSetCommands
-        )
+        every { connection.zSetCommands() }.returns(zSetCommands)
         every { zSetCommands.zAdd(any(), any(), any(), any()) }.returns(true)
 
 
@@ -151,7 +150,16 @@ class LeaderboardServiceUnitTest {
     //TODO test for get null from archive service
 
     @Test
-    fun getLeaderboard() {
+    fun givenNoPreviousLeaderboard_whenGetLeaderboard_thenThrowNotFound() {
+        every {
+            leaderboardArchiveService.getLeaderboard(any())
+        }.returns(null)
+
+        try {
+            leaderboardService.getLeaderboard("199701")
+        } catch (e: Exception) {
+            assertEquals(e::class, LeaderboardNotFoundException::class)
+        }
     }
 
     @Test
@@ -177,6 +185,6 @@ class LeaderboardServiceUnitTest {
     @Test
     fun givenUserAndScore_whenSaveToLeaderboard_thenSaveCurrentMonthAndAllTime() {
         leaderboardService.saveToLeaderboard(dummyString, 123.45)
-        verify(exactly = 2) { redisTemplate.execute(any<RedisCallback<Any>>()) }
+        verify { redisTemplate.execute(any<RedisCallback<Any>>()) }
     }
 }

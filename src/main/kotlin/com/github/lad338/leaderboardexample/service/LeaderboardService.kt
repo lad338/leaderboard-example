@@ -1,8 +1,9 @@
 package com.github.lad338.leaderboardexample.service
 
-import com.github.lad338.leaderboardexample.constant.LeaderboardConstant
+import com.github.lad338.leaderboardexample.constant.LeaderboardConstant.Companion.ALL_TIME
 import com.github.lad338.leaderboardexample.model.Leaderboard
 import com.github.lad338.leaderboardexample.model.UserScore
+import com.github.lad338.leaderboardexample.model.error.LeaderboardNotFoundException
 import com.github.lad338.leaderboardexample.util.LeaderboardHelper
 import org.springframework.data.redis.connection.RedisZSetCommands
 import org.springframework.data.redis.core.RedisTemplate
@@ -17,23 +18,19 @@ class LeaderboardService(
     private val leaderboardArchiveService: LeaderboardArchiveService
 ) : LeaderboardHelper {
     fun saveToLeaderboard(user: String, score: Double) {
-        saveToLeaderboardIfHigherScore(user, score, getLeaderboardKey(getCurrentMonthLeaderboardName()))
-        saveToLeaderboardIfHigherScore(user, score, getLeaderboardKey(LeaderboardConstant.ALL_TIME))
+        saveToLeaderboardIfHigherScore(user, score, getCurrentMonthLeaderboardName())
     }
 
     fun getLeaderboard(name: String): Leaderboard {
 
         return if (isOngoingLeaderboard(name)) {
-            //TODO handle 404
             Leaderboard(getUserScoresFromCache(name))
         } else {
-            //TODO handle 404
-            leaderboardArchiveService.getLeaderboard(name)?.leaderboard ?: throw NotImplementedError()
+            leaderboardArchiveService.getLeaderboard(name)?.leaderboard ?: throw LeaderboardNotFoundException()
         }
     }
 
     fun getUserScoresFromCache(name: String): List<UserScore> {
-        //TODO handle !!
         return redisTemplate
             .opsForZSet()
             .reverseRangeWithScores(
@@ -44,13 +41,19 @@ class LeaderboardService(
             .orEmpty()
     }
 
-    private fun saveToLeaderboardIfHigherScore(user: String, score: Double, leaderboardName: String) {
-        val key = mustSerializeString(leaderboardName)
+    private fun saveToLeaderboardIfHigherScore(user: String, score: Double, currentMonth: String) {
+
+        val allTimeKey = mustSerializeString(getLeaderboardKey(ALL_TIME))
+        val monthKey = mustSerializeString(getLeaderboardKey(currentMonth))
         val value = mustSerializeString(user)
 
         redisTemplate.execute { connection ->
             connection.zSetCommands().zAdd(
-                key, score, value, RedisZSetCommands.ZAddArgs.empty().gt()
+                allTimeKey, score, value, RedisZSetCommands.ZAddArgs.empty().gt()
+            )
+
+            connection.zSetCommands().zAdd(
+                monthKey, score, value, RedisZSetCommands.ZAddArgs.empty().gt()
             )
         }
     }
