@@ -1,0 +1,24 @@
+version: "3"
+services:
+  app:
+    build: .
+    environment:
+      REDIS_HOST: redis
+      MONGO_HOST: mongo
+    depends_on:
+      - redis
+      - mongo
+    ports:
+      - 8080:8080
+  redis:
+    image: "redis:7.0.9-alpine"
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - ./docker-cache/redis:/data
+  mongo:
+    image: "mongo:6.0.5"
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    volumes:
+      - ./docker-cache/mongodb:/data/db
