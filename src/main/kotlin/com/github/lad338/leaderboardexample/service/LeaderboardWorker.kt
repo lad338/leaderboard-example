@@ -5,6 +5,7 @@ import com.github.lad338.leaderboardexample.model.Leaderboard
 import com.github.lad338.leaderboardexample.model.document.LeaderboardDocument
 import com.github.lad338.leaderboardexample.repository.LeaderboardRepository
 import com.github.lad338.leaderboardexample.util.LeaderboardHelper
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
@@ -13,7 +14,7 @@ class LeaderboardWorker(
     private val leaderboardService: LeaderboardService
 ) : LeaderboardHelper {
 
-    //TODO cronjob
+    @Scheduled(cron = "0 * * ? * *")
     fun savePreviousMonthLeaderboardToDatabase() {
         val previousMonth = getPreviousMonthLeaderboardName()
         if (leaderboardRepository.getLeaderboardDocumentByName(previousMonth) == null) {
@@ -30,7 +31,7 @@ class LeaderboardWorker(
         }
     }
 
-    //TODO cronjob
+    @Scheduled(cron = "0 * * ? * *")
     fun backupLeaderboards() {
         backupLeaderboard(getCurrentMonthLeaderboardName())
         backupLeaderboard(LeaderboardConstant.ALL_TIME)
