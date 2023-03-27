@@ -18,7 +18,7 @@ class LeaderboardService(
     private val leaderboardArchiveService: LeaderboardArchiveService
 ) : LeaderboardHelper {
     fun saveToLeaderboard(user: String, score: Double) {
-        saveToLeaderboardIfHigherScore(user, score, getCurrentMonthLeaderboardName())
+        saveToLeaderboardIfHigherScore(user, score)
     }
 
     fun getLeaderboard(name: String): Leaderboard {
@@ -41,10 +41,10 @@ class LeaderboardService(
             .orEmpty()
     }
 
-    private fun saveToLeaderboardIfHigherScore(user: String, score: Double, currentMonth: String) {
+    private fun saveToLeaderboardIfHigherScore(user: String, score: Double) {
 
         val allTimeKey = mustSerializeString(getLeaderboardKey(ALL_TIME))
-        val monthKey = mustSerializeString(getLeaderboardKey(currentMonth))
+        val monthKey = mustSerializeString(getLeaderboardKey(getCurrentMonthLeaderboardName()))
         val value = mustSerializeString(user)
 
         redisTemplate.execute { connection ->
