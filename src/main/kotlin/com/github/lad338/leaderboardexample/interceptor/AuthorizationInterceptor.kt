@@ -14,7 +14,7 @@ class AuthorizationInterceptor : HandlerInterceptor {
         handler: Any
     ): Boolean {
         val auth = request.getHeader("Authorization")
-        if (auth != null && auth.isEmpty()) {
+        if (auth != null && auth.isNotBlank()) {
             if (auth.startsWith("Bearer ")) {
                 return true
             }
