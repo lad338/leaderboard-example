@@ -6,8 +6,7 @@ group #2f2e7b Authorized #white
 Controller->Leaderboard Service: Save score
 Leaderboard Service->Redis: Save to ZSET of \ncurrent month leaderboard\n(if > current score)
 Leaderboard Service->Redis: Save to ZSET of \nall time leaderboard\n(if > current score)
-note over Leaderboard Service,Database: Save history of user post score (not in scope)
-Leaderboard Service->Controller: Return 200 Success
+Leaderboard Service->Controller: Return
 Controller->User: Return 200 Success
 end
 

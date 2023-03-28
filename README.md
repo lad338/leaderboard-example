@@ -60,3 +60,8 @@ A leaderboard backend example in kotlin
         }
       ``` 
 
+# Setup (Optional)
+
+- By default, the leaderboards are empty for all time and current month while past leaderboards are not found.
+- To generate data to leaderboard, use the script `sh ./scripts/add_redis.sh $MONTH` (
+  e.g. `sh ./scripts/add_redis.sh 202302`) to generate redis data for a specific month.

@@ -9,7 +9,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDateTime
 
 class LeaderboardWorkerUnitTest {
 
@@ -23,13 +22,10 @@ class LeaderboardWorkerUnitTest {
     private val dummyString = "DUMMY"
     private val dummyScore = 123.45
     private val dummyUserScore = listOf(UserScore(dummyString, dummyScore))
-    private val dummyDateTime = LocalDateTime.now()
     private val dummyDocument = LeaderboardDocument(
         dummyString,
         Leaderboard(dummyUserScore),
-        true,
-        dummyDateTime,
-        dummyDateTime
+        true
     )
 
     @BeforeEach

@@ -4,8 +4,11 @@ dep:
 run:
 	docker compose up
 
-build:
+rebuild:
 	docker compose build
 
 test:
 	./gradlew test
+
+data:
+	sh ./scripts/add_redis.sh 202302
