@@ -19,6 +19,7 @@ class ScoreController(private val leaderboardService: LeaderboardService) {
         description = "Add score to current month leaderboard and all time leaderboard if the score is greater than the record. Please use Authorize on the top right button to set the userId as the bearer token"
     )
     fun postScore(
+        //Require authorization header to mimic user authorization and to acquire user id
         @Parameter(hidden = true) @RequestHeader("Authorization") authorization: String,
         @RequestBody request: PostScoreRequest
     ) {

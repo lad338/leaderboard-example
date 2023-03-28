@@ -18,35 +18,12 @@ class LeaderboardService(
     private val leaderboardArchiveService: LeaderboardArchiveService
 ) : LeaderboardHelper {
     fun saveToLeaderboard(user: String, score: Double) {
-        saveToLeaderboardIfHigherScore(user, score)
-    }
-
-    fun getLeaderboard(name: String): Leaderboard {
-
-        return if (isOngoingLeaderboard(name)) {
-            Leaderboard(getUserScoresFromCache(name))
-        } else {
-            leaderboardArchiveService.getLeaderboard(name)?.leaderboard ?: throw LeaderboardNotFoundException()
-        }
-    }
-
-    fun getUserScoresFromCache(name: String): List<UserScore> {
-        return redisTemplate
-            .opsForZSet()
-            .reverseRangeWithScores(
-                getLeaderboardKey(name),
-                0,
-                9
-            )?.map { UserScore(it.value!!, it.score!!) }
-            .orEmpty()
-    }
-
-    private fun saveToLeaderboardIfHigherScore(user: String, score: Double) {
-
+        //serialize key and value to ByteArray
         val allTimeKey = mustSerializeString(getLeaderboardKey(ALL_TIME))
         val monthKey = mustSerializeString(getLeaderboardKey(getCurrentMonthLeaderboardName()))
         val value = mustSerializeString(user)
 
+        // Run ZADD command for all time leaderboard and current month leaderboard
         redisTemplate.execute { connection ->
             connection.zSetCommands().zAdd(
                 allTimeKey, score, value, RedisZSetCommands.ZAddArgs.empty().gt()
@@ -56,6 +33,29 @@ class LeaderboardService(
                 monthKey, score, value, RedisZSetCommands.ZAddArgs.empty().gt()
             )
         }
+    }
+
+    fun getLeaderboard(name: String): Leaderboard {
+        //if ongoing leaderboard (all time or current month) then get user scores from redis
+        return if (isOngoingLeaderboard(name)) {
+            Leaderboard(getUserScoresFromCache(name))
+        } else {
+            //get from cache
+            leaderboardArchiveService.getLeaderboard(name)?.leaderboard ?: throw LeaderboardNotFoundException()
+        }
+    }
+
+    fun getUserScoresFromCache(name: String): List<UserScore> {
+        // Redis ZRANGE REV command
+        // FROM 0 9 (inclusive)
+        return redisTemplate
+            .opsForZSet()
+            .reverseRangeWithScores(
+                getLeaderboardKey(name),
+                0,
+                9
+            )?.map { UserScore(it.value!!, it.score!!) }
+            .orEmpty()
     }
 
     private fun mustSerializeString(s: String): ByteArray {

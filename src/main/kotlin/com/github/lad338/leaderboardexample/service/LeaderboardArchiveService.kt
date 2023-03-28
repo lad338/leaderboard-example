@@ -13,6 +13,7 @@ class LeaderboardArchiveService(
 
     @Cacheable(value = [LeaderboardConstant.ARCHIVE_PREFIX], key = "#name", unless = "#result == null")
     fun getLeaderboard(name: String): LeaderboardDocument? {
+        //Get from database if cache miss, then save to cache
         return leaderboardRepository.getLeaderboardDocumentByName(name)
     }
 }

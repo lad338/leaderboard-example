@@ -14,9 +14,12 @@ class LeaderboardWorker(
     private val leaderboardService: LeaderboardService
 ) : LeaderboardHelper {
 
+    //Scheduled for every minute for demonstration purpose
     @Scheduled(cron = "0 * * ? * *")
     fun savePreviousMonthLeaderboardToDatabase() {
+
         val previousMonth = getPreviousMonthLeaderboardName()
+        // Save previous month leaderboard if previous month leaderboard is not in database and not empty in cache
         if (leaderboardRepository.getLeaderboardDocumentByName(previousMonth) == null) {
             val userScoresFromCache = leaderboardService.getUserScoresFromCache(previousMonth)
             if (userScoresFromCache.isNotEmpty()) {
@@ -31,6 +34,7 @@ class LeaderboardWorker(
         }
     }
 
+    //Scheduled for every minute for demonstration purpose
     @Scheduled(cron = "0 * * ? * *")
     fun backupLeaderboards() {
         backupLeaderboard(getCurrentMonthLeaderboardName())
@@ -39,6 +43,7 @@ class LeaderboardWorker(
 
     private fun backupLeaderboard(name: String) {
         val userScoresFromCache = leaderboardService.getUserScoresFromCache(name)
+        // backup leaderboard to db from cache if not empty
         if (userScoresFromCache.isNotEmpty()) {
             leaderboardRepository.save(
                 LeaderboardDocument(
