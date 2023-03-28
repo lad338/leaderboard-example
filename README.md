@@ -30,10 +30,11 @@ A leaderboard backend example in kotlin
       ```
     - cURL:
 
-      -Command: `curl --location 'localhost:8080/scores' --header 'Authorization: Bearer ${userId}' --header 'Content-Type: application/json' --data '{"score": ${score}}'`
+        - Command:
+            - `curl --location 'localhost:8080/scores' --header 'Authorization: Bearer ${userId}' --header 'Content-Type: application/json' --data '{"score": ${score}}'`
 
-        -
-      Example: `curl --location 'localhost:8080/scores' --header 'Authorization: Bearer user1' --header 'Content-Type: application/json' --data '{"score": 123.45}'`
+        - Example:
+            - `curl --location 'localhost:8080/scores' --header 'Authorization: Bearer user1' --header 'Content-Type: application/json' --data '{"score": 123.45}'`
 - Get leaderboard
     - GET `/leaderboards/{name}`
     - `{name}` is either `all_time` for all time leaderboard or `YYYYMD` for monthly leaderboard
